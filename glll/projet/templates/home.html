@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django google sign in </title>
+</head>
+<body>
+    {% load socialaccount %}
+    <h2>Google login</h2>
+    <a href="{% provider_login_url 'google' %}?next=/">Login  with google</a>
+    {% if user.is_authenticated %}
+    <p>you are signed in as {{ user.email }}</p>
+    <a href="logout">logout</a>
+    {% endif %}
+</body>
+</html>
