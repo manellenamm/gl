@@ -25,9 +25,11 @@ SECRET_KEY = 'django-insecure-0$7xj7y!v0-#gdyc%db4-zjl+r35uaw_fl2&4e7bnl_%!+vwk(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
-SITE_ID =2
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'example.com']
+
+
+SITE_ID = 2
 # Application definition
 
 INSTALLED_APPS = [
@@ -60,7 +62,6 @@ AUTHENTICATION_BACKENDS = (
 LOGIN_REDIRECT_URL="/"
 LOGOUT_REDIRECT_URL="/"
 
-AUTH_USER_MODEL = 'projet.User' 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -69,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+  
 ]
 
 ROOT_URLCONF = 'glll.urls'
@@ -145,3 +147,14 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_URL = '/login/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "aissoumanel009@gmail.com"
+EMAIL_HOST_PASSWORD = "hmsanvukusqkosws"

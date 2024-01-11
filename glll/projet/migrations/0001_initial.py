@@ -44,16 +44,5 @@ class Migration(migrations.Migration):
                 ('objects', django.contrib.auth.models.UserManager()),
             ],
         ),
-        migrations.CreateModel(
-            name='Avocat',
-            fields=[
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='projet.user')),
-                ('username', models.CharField(blank=True, max_length=30, null=True)),
-                ('specialite', models.CharField(blank=True, max_length=255, null=True)),
-                ('langue', models.CharField(blank=True, max_length=255, null=True)),
-                ('Numero_de_telephone', models.IntegerField(blank=True, null=True)),
-                ('Adresse', models.CharField(blank=True, max_length=50, null=True)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='images/')),
-            ],
-        ),
+       
     ]

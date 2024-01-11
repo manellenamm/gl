@@ -16,17 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from projet.views import *
-from projet.models import User
 from rest_framework import routers
 from django.conf import settings
 from django.conf.urls.static import static
 router = routers.SimpleRouter()
 router.register('registeravocat', registrationavocatView, basename='registeravocat' )
 router.register('registerclient', registrationclientView, basename='registerclient' )
-router.register('registeravocat', registrationavocatView, basename='registeravocat' )
-router.register('registeradmin', registrationadminView, basename='registeradmin' )
-
 router.register('recherche', RechercheAvocatAPIView, basename='recherche' )
+
 
 
 
@@ -35,9 +32,17 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include(router.urls)),
     path('api/login/', LoginView.as_view(), name='login'), 
-    path('',include("projet.urls")) ,
-    path('accounts/',include("allauth.urls")) ,
-    path('accountss/', include('allauth.socialaccount.urls')),
+     path('available-dates/<str:avocat_email>/', AvailableDatesView.as_view(), name='available-dates'),
+    path('avocat-appointments/<str:avocat_email>/', AvocatAppointmentsView.as_view(), name='avocat-appointments'),
+    path('appointments/<str:avocat_email>/', AppointmentCreateView.as_view(), name='create-appointment'),
+    path('accept-appointment/<str:avocat_email>/<int:id>/', AcceptAppointmentView.as_view(), name='accept-appointment'),
+    path('create-rating/', RatingCreateView.as_view(), name='create-rating'),
+    path('avocat-rating/<str:avocat_email>/', AvocatRatingView.as_view(), name='avocat-rating'),
+    path('refuse-appointment/<str:avocat_email>/<int:id>/', RefuseAppointmentView.as_view(), name='refuse-appointment'),
+    path('create-comment/', CommentCreateView.as_view(), name='create-comment'),
+    path('avocat-comments/<int:avocat_id>/', AvocatCommentsView.as_view(), name='avocat-comments'),
+
+
     
     
 
