@@ -10,7 +10,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import check_password
 from django.db.models import Avg
-
+from rest_framework.decorators import action
 
 
 
@@ -19,13 +19,13 @@ class registrationavocatView(viewsets.ModelViewSet):
     serializer_class = registrationavocatSerializer
     queryset = Avocat.objects.all()  # Assurez-vous de définir votre propre queryset
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-
-        headers = self.get_success_headers(serializer.data)
-        return Response({'message': 'Registration successful!'}, status=status.HTTP_201_CREATED, headers=headers)
+    @action(detail=False, methods=['post'])
+    def register_avocat(self, request, *args, **kwargs):
+        serializer = registrationavocatSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Registration successful!'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 
@@ -63,17 +63,15 @@ class LoginView(APIView):
 
                 # Redirection en fonction du type d'utilisateur
                 if isinstance(user, Client):
-                    return Response({'message': 'Login successful! Redirect to client page.'})
+                    return Response({'redirect_url': '/UserProfile/'})
                 elif isinstance(user, Avocat):
-                    return Response({'message': 'Login successful! Redirect to avocat page.'})
+                    return Response({'redirect_url': '/UserProfile/'}) 
                 elif isinstance(user, Admin):
                     return Response({'message': 'Login successful! Redirect to admin page.'})
             else:
                 return Response({'message': 'Invalid email or password'}, status=status.HTTP_401_UNAUTHORIZED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 class RechercheAvocatAPIView(viewsets.ViewSet):
     serializer_class = AvocatSerializer  # Utilisez AvocatSerializer ici
@@ -328,3 +326,8 @@ class AvocatCommentsView(generics.ListAPIView):
         avocat_id = self.kwargs['avocat_id']
         avocat = get_object_or_404(Avocat, pk=avocat_id)
         return Comment.objects.filter(avocat=avocat)
+    
+
+
+
+

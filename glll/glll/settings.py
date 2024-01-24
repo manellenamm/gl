@@ -26,10 +26,10 @@ SECRET_KEY = 'django-insecure-0$7xj7y!v0-#gdyc%db4-zjl+r35uaw_fl2&4e7bnl_%!+vwk(
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'example.com']
 
 
-SITE_ID = 2
+
+SITE_ID = 7
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,25 +42,22 @@ INSTALLED_APPS = [
     'rest_framework',
     'projet',
     'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-]
+    
+    
+    
+    ]
 
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
-    },
-}
+
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+ 
+ 
+    
   
 )
-LOGIN_REDIRECT_URL="/"
-LOGOUT_REDIRECT_URL="/"
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -70,15 +67,24 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+ 
+   
   
 ]
 
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '163820776296-0o1opgifvf3fj6ihf1r9to8fmk6eao1b.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
+LOGIN_REDIRECT_URL = '/'
 ROOT_URLCONF = 'glll.urls'
 import os 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'reactapp/build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -142,12 +148,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    # Ajoutez le chemin vers le dossier 'build' de votre application React.
+    os.path.join(BASE_DIR, 'reactapp/build/static'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
@@ -158,3 +165,17 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "aissoumanel009@gmail.com"
 EMAIL_HOST_PASSWORD = "hmsanvukusqkosws"
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'APP': {
+            'client_id': '163820776296-0o1opgifvf3fj6ihf1r9to8fmk6eao1b.apps.googleusercontent.com',
+            'secret': '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',
+           
+        }
+    }
+}

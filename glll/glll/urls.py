@@ -19,6 +19,7 @@ from projet.views import *
 from rest_framework import routers
 from django.conf import settings
 from django.conf.urls.static import static
+from django.urls import re_path
 router = routers.SimpleRouter()
 router.register('registeravocat', registrationavocatView, basename='registeravocat' )
 router.register('registerclient', registrationclientView, basename='registerclient' )
@@ -41,7 +42,8 @@ urlpatterns = [
     path('refuse-appointment/<str:avocat_email>/<int:id>/', RefuseAppointmentView.as_view(), name='refuse-appointment'),
     path('create-comment/', CommentCreateView.as_view(), name='create-comment'),
     path('avocat-comments/<int:avocat_id>/', AvocatCommentsView.as_view(), name='avocat-comments'),
-
+    
+    
 
     
     
