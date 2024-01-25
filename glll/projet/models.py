@@ -19,20 +19,21 @@ class Avocat(models.Model):
 from django.db import models
 
 class Admin(models.Model):
-    admin_id = models.AutoField(primary_key=True , default=None)
-    email = models.CharField(max_length=50, blank=True, null=True, default='some_default_value')
-    password_admin = models.CharField(max_length=50, blank=True, null=True)
+    username = models.CharField(max_length=150, unique=True, blank=True, null=True)
+    email = models.CharField(max_length=50, unique= True ,blank=True, null=True, default='some_default_value')
+    
 
     def __str__(self):
-        return f"Admin: {self.admin_id} - {self.email}"
+        return self.username or self.email
+    
 
 class Client(models.Model):
-    client_id = models.AutoField(primary_key=True, default=None)
-    email = models.CharField(max_length=50, blank=True, null=True, default='some_default_value')
-    password_client = models.CharField(max_length=50, blank=True, null=True)
+    username = models.CharField(max_length=150, unique=True, blank=True, null=True)
+    email = models.CharField(max_length=50, unique=True , blank=True, null=True, default='some_default_value')
+ 
 
     def __str__(self):
-        return f"Client: {self.client_id} - {self.email}"
+        return self.username or self.email
     
 
 

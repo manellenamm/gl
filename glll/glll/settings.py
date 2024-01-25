@@ -42,20 +42,21 @@ INSTALLED_APPS = [
     'rest_framework',
     'projet',
     'django.contrib.sites',
-    
-    
-    
+    'corsheaders' ,
+
     ]
 
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+   
  
  
     
   
 )
+
+
 
 
 
@@ -68,23 +69,21 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+
+    
  
    
   
 ]
 
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '163820776296-0o1opgifvf3fj6ihf1r9to8fmk6eao1b.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
-LOGIN_URL = 'login'
-LOGOUT_URL = 'logout'
-LOGIN_REDIRECT_URL = '/'
+
 ROOT_URLCONF = 'glll.urls'
 import os 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'reactapp/build')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -100,6 +99,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'glll.wsgi.application'
 
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    ]
+
+BASE_FRONTEND_URL = os.environ.get('DJANGO_BASE_FRONTEND_URL', default='http://localhost:5173')
+
+# Google OAuth2 settings
+GOOGLE_OAUTH2_CLIENT_ID = os.environ.get('GOOGLE_OAUTH2_CLIENT_ID')
+GOOGLE_OAUTH2_CLIENT_SECRET = os.environ.get('GOOGLE_OAUTH2_CLIENT_SECRET')
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -148,16 +156,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    # Ajoutez le chemin vers le dossier 'build' de votre application React.
-    os.path.join(BASE_DIR, 'reactapp/build/static'),
-]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_URL = '/login/'
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -168,14 +173,3 @@ EMAIL_HOST_PASSWORD = "hmsanvukusqkosws"
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {'access_type': 'online'},
-        'APP': {
-            'client_id': '163820776296-0o1opgifvf3fj6ihf1r9to8fmk6eao1b.apps.googleusercontent.com',
-            'secret': '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',
-           
-        }
-    }
-}

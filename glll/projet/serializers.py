@@ -61,40 +61,14 @@ class registrationavocatSerializer(serializers.ModelSerializer):
 
         return avocat
 
-
-
-
-class registrationclientSerializer(serializers.ModelSerializer):
-    password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-
+class ClientSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Client
-        fields = ['email', 'password_client', 'password2']
-        extra_kwargs = {
-            'password_admin': {'write_only': True},
-        }
+        fields = ['username', 'email']
 
-    def validate(self, data):
-        password1 = data.get('password_client')
-        password2 = data.get('password2')
 
-        if password1 and password2 and password1 != password2:
-            raise serializers.ValidationError("Les mots de passe doivent correspondre.")
 
-        return data
-
-    def create(self, validated_data):
-        validated_data.pop('password2', None)
-
-        # Hash the password before saving
-        validated_data['password_client'] = make_password(validated_data['password_client'])
-
-        client = Client.objects.create(
-            email=validated_data['email'],
-            password_client=validated_data['password_client'],
-        )
-
-        return client
     
 
 from django.contrib.auth.hashers import check_password
