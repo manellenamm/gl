@@ -6,7 +6,7 @@ import "./index.css";
 
 const BACKEND_API_URL = "http://127.0.0.1:8000";
 
-const SocialAuth = () => {
+const SocialAuthadmin = () => {
   const location = useLocation();
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -22,13 +22,13 @@ const SocialAuth = () => {
 
   const googleLoginHandler = (code) => {
     axios
-      .get(`${BACKEND_API_URL}/api/auth/google/`, {
+      .get(`${BACKEND_API_URL}/api/auth/googlle/`, {
         params: { code: code }, 
       })
       .then((res) => {
         console.log("res", res);
-        localStorage.setItem("goggleFirstName", res.data.user.first_name);
-        navigate("/loginuser/");
+        localStorage.setItem("goggleFirstName", res.data.user.username);
+        navigate("/loginadmin/");
       })
       .catch((err) => {
         console.log("error", err);
@@ -49,4 +49,4 @@ const SocialAuth = () => {
   );
 };
 
-export default SocialAuth;
+export default SocialAuthadmin;

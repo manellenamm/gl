@@ -323,9 +323,12 @@ from rest_framework import serializers
 from rest_framework.views import APIView
 from django.shortcuts import redirect
 from rest_framework.response import Response
+from django.urls import reverse  # Ajoutez cette ligne pour utiliser reverse
 from .mixins import PublicApiMixin, ApiErrorsMixin
 from .utils import google_get_access_token, google_get_user_info, generate_tokens_for_user
+from .models import Client  # Assurez-vous que c'est correctement importé
 from rest_framework import status
+from .serializers import ClientSerializer  # Assurez-vous que c'est correctement importé
 from django.conf import settings
 
 class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
@@ -354,34 +357,65 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
         user_data = google_get_user_info(access_token=access_token)
 
         try:
-            email = user_data['email']
-            username = user_data.get('username', None)
-
-            # Assurez-vous que la clé 'username' existe dans le dictionnaire
-            if username is not None:
-                # Vérifiez d'abord si l'utilisateur existe
-                user = Client.objects.filter(email=email, username=username).first()
-
-                if not user:
-                    # Créez l'utilisateur s'il n'existe pas
-                    user = Client.objects.create(
-                        email=email,
-                        username=username,
-                    )
-            else:
-                # Traitez le cas où 'username' n'est pas présent dans le dictionnaire
-                raise Client.DoesNotExist
-
+            user = Client.objects.get(email=user_data['email'])
         except Client.DoesNotExist:
             username = user_data.get('given_name', '')
+          
 
-            user = Client.objects.create(
-                email=email,
-                username=username or None,
+            user =Client.objects.create(
+                email=user_data['email'],
+                username=username,
             )
+            
         access_token, refresh_token = generate_tokens_for_user(user)
         response_data = {
             'user': ClientSerializer(user).data,
+            'access_token': str(access_token),
+            'refresh_token': str(refresh_token)
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
+    
+
+class GoogleLoginAdmin(PublicApiMixin, ApiErrorsMixin, APIView):
+    class InputSerializer(serializers.Serializer):
+        code = serializers.CharField(required=False)
+        error = serializers.CharField(required=False)
+
+    def get(self, request, *args, **kwargs):
+        input_serializer = self.InputSerializer(data=request.GET)
+        input_serializer.is_valid(raise_exception=True)
+
+        validated_data = input_serializer.validated_data
+
+        code = validated_data.get('code')
+        error = validated_data.get('error')
+
+        login_url = f'{settings.BASE_FRONTEND_URL}'
+    
+        if error or not code:
+            params = urlencode({'error': error})
+            return redirect(f'{login_url}?{params}')
+
+        redirect_uri = f'{settings.BASE_FRONTEND_URL}/googlle'
+        access_token = google_get_access_token(code=code, redirect_uri=redirect_uri)
+
+        user_data = google_get_user_info(access_token=access_token)
+
+        try:
+            user = Admin.objects.get(email=user_data['email'])
+        except Admin.DoesNotExist:
+            username = user_data.get('given_name', '')
+          
+
+            user =Admin.objects.create(
+                email=user_data['email'],
+                username=username,
+            )
+            
+        access_token, refresh_token = generate_tokens_for_user(user)
+        response_data = {
+            'user': AdminSerializer(user).data,
             'access_token': str(access_token),
             'refresh_token': str(refresh_token)
         }

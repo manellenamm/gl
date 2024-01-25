@@ -68,6 +68,12 @@ class ClientSerializer(serializers.ModelSerializer):
         fields = ['username', 'email']
 
 
+class AdminSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Client
+        fields = ['username', 'email']
+
 
     
 

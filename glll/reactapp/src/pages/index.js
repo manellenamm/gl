@@ -6,7 +6,7 @@ export { default as UserProfile } from "./UserProfile/UserProfile";
 export { default as Loginadmin } from "./Loginadmin/Loginadmin";
 export { default as Loginuser } from "./Loginuser/Loginuser";
 export { default as SocialAuth } from "./SocialAuth";
-
+export { default as SocialAuthadmin } from "./SocialAuthadmin";
 
 
 

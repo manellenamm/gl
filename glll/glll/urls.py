@@ -42,7 +42,7 @@ urlpatterns = [
     path('create-comment/', CommentCreateView.as_view(), name='create-comment'),
     path('avocat-comments/<int:avocat_id>/', AvocatCommentsView.as_view(), name='avocat-comments'),
     path("api/auth/google/", GoogleLoginApi.as_view(), name="login-with-google"),
-    
+    path("api/auth/googlle/", GoogleLoginAdmin.as_view(), name="login$"),
     
     
     

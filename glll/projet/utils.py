@@ -22,8 +22,11 @@ def generate_tokens_for_user(user):
     refresh_token = token_data
     return access_token, refresh_token
 
+import requests
 
 def google_get_access_token(*, code: str, redirect_uri: str) -> str:
+    print(f"Redirect URI: {redirect_uri}")  # Ajoutez cette déclaration de print
+
     data = {
         'code': code,
         'client_id': '163820776296-geanruermitcjrjfv2f6gkk8v6uvockq.apps.googleusercontent.com',
@@ -35,9 +38,11 @@ def google_get_access_token(*, code: str, redirect_uri: str) -> str:
     response = requests.post(GOOGLE_ACCESS_TOKEN_OBTAIN_URL, data=data)
 
     if not response.ok:
+        print(f"Google Access Token Response: {response.json()}")  # Ajoutez cette déclaration de print
         raise ValidationError('Failed to obtain access token from Google.')
 
     access_token = response.json()['access_token']
+    print(f"Google Access Token: {access_token}")  # Ajoutez cette déclaration de print
 
     return access_token
 
