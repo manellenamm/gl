@@ -27,7 +27,7 @@ const Login = () => {
         if (responseData.redirect_url) {
           navigate(responseData.redirect_url); // Utilisez navigate au lieu de history.push
         } else {
-          navigate('/');
+          navigate('//');
         }
       }
 
