@@ -13,13 +13,14 @@ function LawyersLawyer() {
     return (
         <div>
             {lawyers.map(lawyer => (
-                <div key={lawyer.avocat_id} style={{ marginBottom: '20px' }}>
-                    <h3>{lawyer.username}</h3>
+                <div key={lawyer.avocat_id} style={{ marginBottom: '20px', width: '20%' }}>
+                    
                     <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <h3>{lawyer.username}</h3>
                         <img
                             src={lawyer.image ? lawyer.image.toString() : ''}
                             alt={`Image de ${lawyer.username}`}
-                            style={{ maxWidth: '100%', height: 'auto', marginRight: '10px' }}
+                            style={{ Width: '50px', height: '50px', borderRadius:'50px'}}
                         />
                         <div style={{ fontSize: '14px' }}>
                             <p>{`Spécialité: ${lawyer.specialite}`}</p>

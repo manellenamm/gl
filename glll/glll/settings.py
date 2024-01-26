@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'corsheaders' ,
     'drf_yasg',
-     'dbbackup',
+    'bs4',
 
     ]
 

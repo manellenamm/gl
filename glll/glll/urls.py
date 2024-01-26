@@ -25,7 +25,6 @@ router.register('registeravocat', registrationavocatView, basename='registeravoc
 router.register('recherche', RechercheAvocatAPIView, basename='recherche' )
 
 
-
 from django.contrib import admin
 from django.urls import path, re_path, include
 from rest_framework import permissions
@@ -69,11 +68,11 @@ urlpatterns = [
     path('lawyers/', LawyerList.as_view(), name='lawyer-list'),
     path('lawyers/<int:pk>/', LawyerDetail.as_view(), name='lawyer-detail'),
 
+
     
     
     
-    
-    
+
 
     
 

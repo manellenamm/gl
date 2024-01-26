@@ -148,7 +148,7 @@ from .models import Appointment, Avocat, Client
 class CreneauSerializer(serializers.ModelSerializer):
     class Meta:
         model = Creneau  
-        fields = ['date', 'time']
+        fields = ['date_time', 'time']
 
 class AppointmentSerializer(serializers.ModelSerializer):
     client_email = serializers.EmailField(write_only=True)
@@ -177,18 +177,18 @@ class AppointmentSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'client_email': 'Client not found.'})
 
         creneau_data = validated_data.pop('creneau')
-        date = creneau_data['date']
+        date = creneau_data['date_time']
         time = creneau_data['time']
 
         # Vérifier si la date est déjà dans la table Creneau
-        existing_creneau = Creneau.objects.filter(date=date, time=time).first()
+        existing_creneau = Creneau.objects.filter(date_time=date, time=time).first()
 
         if existing_creneau:
             raise serializers.ValidationError({'creneau': 'Date and time already taken.'})
 
         # Si la date n'est pas déjà dans la table Creneau et l'heure est valide, la créer
         creneau = Creneau.objects.create(
-            date=date,
+            date_time=date,
             time=time
         )
 

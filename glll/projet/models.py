@@ -54,7 +54,7 @@ class Creneau(models.Model):
    
 
     def __str__(self):
-        return f"Creneau at {self.date}"
+        return f"Creneau at {self.date_time}"
 
 
 class Rating(models.Model):

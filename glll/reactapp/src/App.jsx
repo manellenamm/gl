@@ -22,6 +22,9 @@ export default function App() {
             <Route path="/LawyerPage" exact element={<LawyerPage />} />
             <Route exact path="/google" element={<SocialAuth />} />
              <Route exact path="/googlle" element={<SocialAuthadmin />} />
+             <Route path="/LawyerPage" exact element={<LawyerPage />} />
+            <Route path="/LawyerPageClient" exact element={<LawyerPageClient />} />
+
 
             
             

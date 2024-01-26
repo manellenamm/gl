@@ -10,6 +10,7 @@ export { default as SocialAuthadmin } from "./SocialAuthadmin";
 export { default as Accueil } from "./New folder/Accueil";
 export { default as Admin } from "./New folder/Admin";
 export { default as LawyerPage } from "./New folder/lawyer profile/lawyerPage";
+export { default as LawyerPageClient } from "./New folder/lawyer profile/lawyerPageClient";
 
 
 

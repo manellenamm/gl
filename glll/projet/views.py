@@ -128,9 +128,6 @@ class AvailableDatesView(generics.ListAPIView):
     
 
 
-    
-
-
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import Appointment, Avocat, Client
@@ -176,11 +173,21 @@ class AcceptAppointmentView(APIView):
             avocat = get_object_or_404(Avocat, email=avocat_email)
 
             # Récupérer l'appointment associé à cet avocat
-            appointment = get_object_or_404(Appointment, id_appointment=id, avocat=avocat)
+            appointment = get_object_or_404(Appointment, id_appointment=id, avocat=avocat , status='en_attente')
 
             # Mettre à jour le statut de l'appointment à 'accepte'
             appointment.status = 'accepte'
             appointment.save()
+            client_email = appointment.client.email
+           
+            subject = "Rendez-vous Accepte"
+            message = 'appointment_Accepted'
+            from_email = "aissoumanel009@gmail.com"  # Set your email address here
+            send_mail(subject, 
+                      message ,
+                      from_email,
+                      [client_email] ,
+                       fail_silently=False)
 
             # Serializer l'appointment mis à jour
             serializer = AvocatAppointmentSerializer(appointment)
@@ -237,28 +244,25 @@ class RefuseAppointmentView(APIView):
 
         
     
-from rest_framework.permissions import IsAuthenticated
-class RatingCreateView(APIView):
-    permission_classes = [IsAuthenticated]
 
+class RatingCreateView(APIView):
     def post(self, request, *args, **kwargs):
         # Utiliser request.user pour récupérer l'utilisateur connecté
-        client_user = request.user
-
+        client_email = request.data.get('client_email')
         # Récupérer les données de la requête
         avocat_email = request.data.get('avocat_email')
         note = request.data.get('note')
 
         try:
             # Récupérer le client à partir de l'utilisateur
-            client = Client.objects.get(email=client_user.email)
+            client = Client.objects.get(email=client_email)
             # Récupérer l'avocat à partir de l'e-mail fourni dans la requête
             avocat = Avocat.objects.get(email=avocat_email)
         except (Client.DoesNotExist, Avocat.DoesNotExist):
             return Response({'error': 'Client or Avocat not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Créer les données pour le modèle Rating
-        rating_data = {'client': client.client_id, 'avocat': avocat.avocat_id, 'note': note}
+        rating_data = {'client': client.id, 'avocat': avocat.avocat_id, 'note': note}
         serializer = RatingSerializer(data=rating_data)
 
         if serializer.is_valid():
