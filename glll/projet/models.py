@@ -14,7 +14,7 @@ class Avocat(models.Model):
     email = models.CharField(max_length=50, blank=True, null=True, default='some_default_value')
 
     def __str__(self):
-        return f"Avocat: {self.avocat_id}"
+        return f"Avocat: {self.email}"
 
 from django.db import models
 
@@ -40,7 +40,7 @@ class Client(models.Model):
 
 class Creneau(models.Model):
     id_creneau=models.AutoField(primary_key=True,  default=None)
-    date =  models.DateField(blank=True, null=True)
+    date_time =  models.DateField(blank=True, null=True)
     HOURS_CHOICES = [
         ('8:00', '8:00'),
         ('9:00', '9:00'),

@@ -43,10 +43,15 @@ INSTALLED_APPS = [
     'projet',
     'django.contrib.sites',
     'corsheaders' ,
+    'drf_yasg',
+     'dbbackup',
 
     ]
 
-
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': '/path/to/backup/folder'}
+DBBACKUP_CLEANUP_KEEP = 10
+DBBACKUP_CLEANUP_EXTENSIONS = ['json']
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
    
@@ -98,7 +103,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'glll.wsgi.application'
 
-
+SELENIUM_BROWSER = 'Opera'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     ]

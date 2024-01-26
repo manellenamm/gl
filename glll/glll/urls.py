@@ -26,6 +26,25 @@ router.register('recherche', RechercheAvocatAPIView, basename='recherche' )
 
 
 
+from django.contrib import admin
+from django.urls import path, re_path, include
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Your API",
+        default_version='v1',
+        description="Your API description",
+        terms_of_service="https://www.yourapp.com/terms/",
+        contact=openapi.Contact(email="contact@yourapp.com"),
+        license=openapi.License(name="Your License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -43,6 +62,15 @@ urlpatterns = [
     path('avocat-comments/<int:avocat_id>/', AvocatCommentsView.as_view(), name='avocat-comments'),
     path("api/auth/google/", GoogleLoginApi.as_view(), name="login-with-google"),
     path("api/auth/googlle/", GoogleLoginAdmin.as_view(), name="login$"),
+    path("api/get-avocat-data/", GetAvocatDataView.as_view(), name="getavocat"),
+    path("api/update-avocat/", GetAvocatDataView.as_view(), name="getavocat"),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0),
+         name='schema-swagger-ui'),
+    path('lawyers/', LawyerList.as_view(), name='lawyer-list'),
+    path('lawyers/<int:pk>/', LawyerDetail.as_view(), name='lawyer-detail'),
+
+    
+    
     
     
     
@@ -50,3 +78,7 @@ urlpatterns = [
     
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+

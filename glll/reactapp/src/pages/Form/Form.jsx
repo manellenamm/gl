@@ -1,8 +1,10 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import "./Form.css";
 
 export default function Form() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -30,12 +32,14 @@ export default function Form() {
       console.log(responseData);
 
       if (response.ok) {
-       
+        // Rediriger vers la page de connexion après l'inscription réussie
+        navigate("/login/");
       }
     } catch (error) {
       console.error("Erreur lors de la requête au backend :", error);
     }
   };
+
 
   return (
     <section>

@@ -54,7 +54,7 @@ class LoginView(APIView):
                 if isinstance(user, Client):
                     return Response({'redirect_url': '/UserProfile/'})
                 elif isinstance(user, Avocat):
-                    return Response({'redirect_url': '/UserProfile/'}) 
+                    return Response({'redirect_url': '/LawyerPage/'}) 
                 elif isinstance(user, Admin):
                     return Response({'message': 'Login successful! Redirect to admin page.'})
             else:
@@ -421,3 +421,64 @@ class GoogleLoginAdmin(PublicApiMixin, ApiErrorsMixin, APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+    
+class GetAvocatDataView(APIView):
+    def post(self, request, *args, **kwargs):
+        avocat_email = request.data.get('email', '')
+
+        if not avocat_email:
+            return Response({"error": "Email not provided in the request"}, status=400)
+
+        try:
+            # Votre logique d'authentification personnalisée ici
+            avocat = Avocat.objects.get(email=avocat_email)
+
+            # Votre logique de validation d'authentification ici
+
+            serializer = AvocatSerializer(avocat)
+            return Response({ "avocatData": serializer.data})
+        except Avocat.DoesNotExist:
+            return Response({"error": "Avocat not found for the provided email"}, status=404)
+        
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def update_avocat(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            avocat_id = data.get('avocat_Id')
+            avocat = Avocat.objects.get(id=avocat_id)
+
+            # Mettez à jour les champs de l'avocat
+            avocat.username = data.get('name', avocat.username)
+            avocat.email = data.get('email', avocat.email)
+            avocat.langue = data.get('langue', avocat.langue)
+            avocat.specialite = data.get('specialite', avocat.specialite)
+            avocat.Numero_de_telephone = data.get('Numero_de_telephone', avocat.Numero_de_telephone)
+            avocat.Adresse = data.get('Adresse', avocat.Adresse)
+            avocat.image = data.get('image', avocat.image)
+
+            avocat.save()
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+
+
+class LawyerList(generics.ListAPIView):
+    queryset = Avocat.objects.all()
+    serializer_class = AvocatSerializer
+
+class LawyerDetail(generics.RetrieveDestroyAPIView):
+    queryset = Avocat.objects.all()
+    serializer_class = AvocatSerializer
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)

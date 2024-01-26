@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const ProfileContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 20px;
-  position: relative; /* Ajout de la position relative pour positionner le bouton Back */
+  position: relative;
 `;
 
 const FormContainer = styled.form`
@@ -18,7 +19,7 @@ const FormContainer = styled.form`
   border-radius: 10px;
   margin-top: 20px;
   width: 70%;
-  position: relative; /* Ajout de la position relative pour positionner le bouton Back */
+  position: relative;
 `;
 
 const ProfilePhotoContainer = styled.div`
@@ -71,16 +72,33 @@ const BackButton = styled.button`
   cursor: pointer;
 `;
 
-const UserProfile = () => {
+const UserProfile = ({ location }) => {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState({
-    name: 'John Doe',
-    email: 'john@example.com',
-    experience: '5 years',
-    specialty: 'Family Law',
-    phoneNumber: '+1234567890',
-    address: '123 Main St, City',
-    photo: 'https://example.com/default-profile.jpg',
+    name: '',
+    email: '',
+    langue: '',
+    specialite: '',
+    Numero_de_telephone: '',
+    Adresse: '',
+    image: '',
   });
+
+  useEffect(() => {
+    if (location?.state?.avocatData) {
+      const avocatData = location.state.avocatData;
+      setUser({
+        username: avocatData.username || '',
+        email: avocatData.email || '',
+        langue: avocatData.langue || '',
+        specialite: avocatData.specialite || '',
+        Numero_de_telephone: avocatData.Numero_de_telephone || '',
+        Adresse: avocatData.Adresse || '',
+        image: avocatData.image || '',
+      });
+    }
+  }, [location]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,7 +115,7 @@ const UserProfile = () => {
     reader.onloadend = () => {
       setUser((prevUser) => ({
         ...prevUser,
-        photo: reader.result,
+        image: reader.result,
       }));
     };
 
@@ -106,24 +124,43 @@ const UserProfile = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('User updated:', user);
-    // Ajouter la logique pour mettre à jour côté serveur si nécessaire
+  
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/update-avocat/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+  
+      const responseData = await response.json();
+  
+      if (response.ok) {
+        console.log('Profil mis à jour avec succès!');
+        navigate('/LawyerPage/', { state: { avocatData: user } }); // Passer les données mises à jour
+      } else {
+        console.error('Erreur lors de la mise à jour du profil :', responseData.error);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la requête au backend :', error);
+    }
   };
 
   return (
     <ProfileContainer>
       <FormContainer onSubmit={handleSubmit}>
-        <BackButton onClick={() => console.log("Back clicked")}>Back</BackButton>
+        <BackButton onClick={() => navigate('/LawyerPage/')}>Back</BackButton>
         <ProfilePhotoContainer>
-          <ProfilePhoto src={user.photo} alt="Profile" />
+          <ProfilePhoto src={user.image} alt="Profile" />
           <ProfileTitle>Profile Avocat</ProfileTitle>
         </ProfilePhotoContainer>
 
         <FormRow>
           <Label>Name:</Label>
-          <Input type="text" name="name" value={user.name} onChange={handleChange} />
+          <Input type="text" name="name" value={user.username} onChange={handleChange} />
         </FormRow>
 
         <FormRow>
@@ -132,23 +169,23 @@ const UserProfile = () => {
         </FormRow>
 
         <FormRow>
-          <Label>Experience:</Label>
-          <Input type="text" name="experience" value={user.experience} onChange={handleChange} />
+          <Label>Langue:</Label>
+          <Input type="text" name="langue" value={user.langue} onChange={handleChange} />
         </FormRow>
 
         <FormRow>
           <Label>Specialty:</Label>
-          <Input type="text" name="specialty" value={user.specialty} onChange={handleChange} />
+          <Input type="text" name="specialite" value={user.specialite} onChange={handleChange} />
         </FormRow>
 
         <FormRow>
           <Label>Phone Number:</Label>
-          <Input type="tel" name="phoneNumber" value={user.phoneNumber} onChange={handleChange} />
+          <Input type="tel" name="Numero_de_telephone" value={user.Numero_de_telephone} onChange={handleChange} />
         </FormRow>
 
         <FormRow>
           <Label>Address:</Label>
-          <Input type="text" name="address" value={user.address} onChange={handleChange} />
+          <Input type="text" name="Adresse" value={user.Adresse} onChange={handleChange} />
         </FormRow>
 
         <FormRow>

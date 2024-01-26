@@ -1,15 +1,15 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom"; // Utilisez useNavigate au lieu de useHistory
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 const Login = () => {
-  const navigate = useNavigate(); // Changez la déclaration de useHistory à useNavigate
+  const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/login/', {
+      const response = await fetch('http://127.0.0.1:8000/api/get-avocat-data/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -21,14 +21,16 @@ const Login = () => {
       });
 
       const responseData = await response.json();
-      console.log(responseData);
 
       if (response.ok) {
+        // Utilisez navigate pour rediriger vers la page appropriée avec les données de l'avocat
         if (responseData.redirect_url) {
-          navigate(responseData.redirect_url); // Utilisez navigate au lieu de history.push
+          navigate(responseData.redirect_url, { state: { avocatData: responseData.avocatData } });
         } else {
-          navigate('//');
+          navigate('/LawyerPage/', { state: { avocatData: responseData.avocatData } });
         }
+      } else {
+        console.error('Erreur lors de la requête au backend :', responseData.error);
       }
 
     } catch (error) {

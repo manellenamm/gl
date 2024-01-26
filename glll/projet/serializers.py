@@ -21,7 +21,7 @@ from .models import Avocat
 class AvocatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Avocat
-        fields = ['username', 'specialite', 'Adresse', 'Numero_de_telephone', 'langue', 'image', 'password_avocat', 'email']
+        fields = [ 'avocat_id','username', 'specialite', 'Adresse', 'Numero_de_telephone', 'langue', 'image', 'password_avocat', 'email']
 
 class registrationavocatSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
