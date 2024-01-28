@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 
 function ProfileIcon({image}){
 
@@ -7,7 +8,7 @@ function ProfileIcon({image}){
         padding:'5px',
         marginLeft:'1.5%',
     }
-    return <img style={imgStyle} src={image} alt='profile_image'/>
+    return <Link to="/Loginadmin"><img style={imgStyle} src={image} alt='profile_image'/></Link>
 }
 
 export default ProfileIcon;
