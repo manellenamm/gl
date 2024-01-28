@@ -63,28 +63,29 @@ class LoginView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class RechercheAvocatAPIView(viewsets.ViewSet):
-    serializer_class = AvocatSerializer  # Utilisez AvocatSerializer ici
+    # Assurez-vous que le modèle Avocat est correctement défini
+    queryset = Avocat.objects.all()
 
     def list(self, request, *args, **kwargs):
-        queryset = Avocat.objects.all()
-
         # Filtrage par spécialité
         specialite = self.request.query_params.get('specialite')
         if specialite:
-            queryset = queryset.filter(specialite__icontains=specialite)
+            self.queryset = self.queryset.filter(specialite__icontains=specialite)
 
         # Filtrage par langue
         langue = self.request.query_params.get('langue')
         if langue:
-            queryset = queryset.filter(langue__icontains=langue)
+            self.queryset = self.queryset.filter(langue__icontains=langue)
 
         # Filtrage par Ville
         adresse = self.request.query_params.get('Adresse')
         if adresse:
-            queryset = queryset.filter(Adresse__icontains=adresse)
+            self.queryset = self.queryset.filter(Adresse__icontains=adresse)
 
-        serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data)
+        # Obtenez une liste simple des avocats (peut être ajustée selon la structure de votre modèle Avocat)
+        avocats_list = list(self.queryset.values())
+
+        return Response(avocats_list)
 
 
 from rest_framework import generics
@@ -135,17 +136,31 @@ from .serializers import AppointmentSerializer
 from rest_framework import views, status
 
 class AppointmentCreateView(APIView):
-    def post(self, request, avocat_email, *args, **kwargs):
-        data = request.data.copy()
-        data['avocat_email'] = avocat_email  # Ajouter l'e-mail de l'avocat dans les données
+   def post(self, request, avocat_id, client_id, *args, **kwargs):
+        try:
+            avocat = get_object_or_404(Avocat, avocat_id=avocat_id)
+            client = get_object_or_404(Client, id=client_id)
+        except (Avocat.DoesNotExist, Client.DoesNotExist):
+            return Response({'error': 'Avocat or Client not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Supprimez la référence explicite à 'request' dans le contexte
-        serializer = AppointmentSerializer(data=data, context={'avocat_email': avocat_email})
+        print("avocat_id:", avocat_id)
+        print("client_id:", client_id)
+
+        # Utilisez directement avocat_id et client_id extraits de l'URL
+        data = {
+            'client': client.id, 
+            'avocat': avocat.avocat_id,
+            'date_time': request.data.get('date_time'),
+            'time': request.data.get('time'),
+        }
         
+        serializer = AppointmentSerializer(data=data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 
 class AvocatAppointmentsView(APIView):
@@ -246,21 +261,17 @@ class RefuseAppointmentView(APIView):
     
 
 class RatingCreateView(APIView):
-    def post(self, request, *args, **kwargs):
-        # Utiliser request.user pour récupérer l'utilisateur connecté
-        client_email = request.data.get('client_email')
-        # Récupérer les données de la requête
-        avocat_email = request.data.get('avocat_email')
-        note = request.data.get('note')
-
+    def post(self, request, client_id, avocat_id, *args, **kwargs):
+        # Utiliser request.user pour récupérer l'utilisateur connecté (si nécessaire)
         try:
-            # Récupérer le client à partir de l'utilisateur
-            client = Client.objects.get(email=client_email)
-            # Récupérer l'avocat à partir de l'e-mail fourni dans la requête
-            avocat = Avocat.objects.get(email=avocat_email)
+            # Récupérer le client à partir de client_id
+            client = get_object_or_404(Client, id=client_id)
+            # Récupérer l'avocat à partir de avocat_id
+            avocat = get_object_or_404(Avocat, avocat_id=avocat_id)
         except (Client.DoesNotExist, Avocat.DoesNotExist):
             return Response({'error': 'Client or Avocat not found'}, status=status.HTTP_404_NOT_FOUND)
-
+        # Récupérer les données de la requête
+        note = request.data.get('note')
         # Créer les données pour le modèle Rating
         rating_data = {'client': client.id, 'avocat': avocat.avocat_id, 'note': note}
         serializer = RatingSerializer(data=rating_data)
@@ -295,25 +306,26 @@ from rest_framework import generics, permissions
 from django.core.exceptions import PermissionDenied
 
 
-class CommentCreateView(generics.CreateAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+@api_view(['POST'])
+def CommentCreateView(request, avocat_id, client_id):
+    avocat = get_object_or_404(Avocat, avocat_id=avocat_id)
+    client = get_object_or_404(Client, id=client_id)
 
-def perform_create(self, serializer):
-    client_email = self.request.data.get('client_email')
-    client = get_object_or_404(Client, email=client_email)
+    if request.method == 'POST':
+        # Ajoutez les valeurs de avocat et client directement dans les données
+        data = request.data.copy()
+        data['avocat'] = avocat.avocat_id  # Utilisez 'avocat.avocat_id' pour récupérer l'ID de l'avocat
+        data['client'] = client.id
 
-    avocat_id = self.request.data.get('avocat')
-    avocat = get_object_or_404(Avocat, pk=avocat_id)
-
-    try:
-        serializer.save(client=client, avocat=avocat)
-    except Exception as e:
-        print(f"Error saving comment: {e}")
-
-
+        serializer = CommentSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
 class AvocatCommentsView(generics.ListAPIView):
-    serializer_class = CommentSerializer
+    serializer_class = CommentsSerializer
 
     def get_queryset(self):
         avocat_id = self.kwargs['avocat_id']
@@ -355,7 +367,7 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
             params = urlencode({'error': error})
             return redirect(f'{login_url}?{params}')
 
-        redirect_uri = f'{settings.BASE_FRONTEND_URL}/google'
+        redirect_uri = f'{settings.BASE_FRONTEND_URL}/Accueil'
         access_token = google_get_access_token(code=code, redirect_uri=redirect_uri)
 
         user_data = google_get_user_info(access_token=access_token)
@@ -370,15 +382,11 @@ class GoogleLoginApi(PublicApiMixin, ApiErrorsMixin, APIView):
                 email=user_data['email'],
                 username=username,
             )
-            
-        access_token, refresh_token = generate_tokens_for_user(user)
-        response_data = {
-            'user': ClientSerializer(user).data,
-            'access_token': str(access_token),
-            'refresh_token': str(refresh_token)
-        }
 
-        return Response(response_data, status=status.HTTP_200_OK)
+            
+            
+    
+        return Response({'message': 'Authentification réussie', 'id_client': user.id}, status=status.HTTP_200_OK)
     
 
 class GoogleLoginAdmin(PublicApiMixin, ApiErrorsMixin, APIView):

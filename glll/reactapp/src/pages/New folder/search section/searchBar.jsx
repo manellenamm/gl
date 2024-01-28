@@ -152,9 +152,12 @@ const SearchBar = () => {
     const [selectedResult, setSelectedResult] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedLanguage, setSelctedLanguage] = useState('arabic');
-    const [selectedCity, setSelctedCity] = useState('Béjaïa');
+    const [selectedCity, setSelctedCity] = useState('Bejaia');
     const [selectedSpecialty, setSelectedSpecialty] = useState('divorce')
-    const [selectedRating, setSelectedRating] = useState(5);
+    const [rating, setRating] = useState(3);
+    
+    
+    const emailAddress = 'example@example.com';
 
 
     //const handleSearch = (e) => {
@@ -167,29 +170,51 @@ const SearchBar = () => {
       //setShowResultsModal(true);
     //};
 
+    // const handleSearch = async () => {
+    //   try {
+    //     // Build the API endpoint with query parameters
+    //     const apiUrl = `http://127.0.0.1:8000/api/recherche/?specialite=${selectedSpecialty}&langue=${selectedLanguage}&Adresse=${selectedCity}`;
+        
+    //     // Make the API request
+    //     const response = await fetch(apiUrl);
+        
+    //     // Check if the request was successful (status code 2xx)
+    //     if (response.ok) {
+    //       const data = await response.json();
+    //       setSearchResults(data);
+    //       setShowModal(false);
+    //       setShowResultsModal(true);
+    //     } else {
+    //       // Handle error cases here
+    //       console.error('Error fetching data:', response.statusText);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error:', error);
+    //   }
+    // };
+ 
+
     const handleSearch = async () => {
-      try {
-        // Build the API endpoint with query parameters
-        const apiUrl = `http://127.0.0.1:8000/api/recherche/?specialite=${selectedSpecialty}&langue=${selectedLanguage}&Adresse=${selectedCity}`;
-        
-        // Make the API request
-        const response = await fetch(apiUrl);
-        
-        // Check if the request was successful (status code 2xx)
-        if (response.ok) {
-          const data = await response.json();
-          setSearchResults(data);
-          setShowModal(false);
-          setShowResultsModal(true);
-        } else {
-          // Handle error cases here
-          console.error('Error fetching data:', response.statusText);
+      try{
+        const respons = await fetch(`http://127.0.0.1:8000/api/recherche/?specialite=${selectedSpecialty}&langue=${selectedLanguage}&Adresse=${selectedCity}`,
+        {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json',},
+
+        })
+        if (respons.ok)
+        {const results = await respons.json()
+        setSearchResults(results)}
+        else {
+          console.error('Error fetching data:', respons.statusText);
         }
-      } catch (error) {
+      }catch(error){
         console.error('Error:', error);
       }
+
     };
  
+
 
     const handleKeyPress = (e) => {
       if (e.key === 'Enter') {
@@ -207,11 +232,37 @@ const SearchBar = () => {
       setShowModal(!showModal);
     };
 
-    const handleResultClick = (index) => {
+    // const handleResultClick = (index) => {
+    //   setSelectedResult(searchResults[index]);
+    //   setShowResultsModal(false)
+    //   setShowDetailsModal(true);
+    // };
+
+    const handleResultClick = async (index) => {
       setSelectedResult(searchResults[index]);
       setShowResultsModal(false)
       setShowDetailsModal(true);
+
+      try{
+        const respons = await fetch(`http://127.0.0.1:8000/api/avocat-rating/${selectedResult.email}/`,{
+          method:'Post',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        if (respons.ok){
+          const rating = await respons.json()
+          setRating(rating)
+        }else{
+          console.error('Error fetching data:', respons.statusText);
+        }
+      }catch(error){
+        console.error('Error:', error)
+
+      }
+
     };
+
 
     const handleSelectedLanguage=(event) =>{
       setSelctedLanguage(event.target.value);
@@ -227,19 +278,19 @@ const SearchBar = () => {
     
     
 
-    const handleSelectRating = (e) => {
-      const value = parseInt(e.target.value, 10);
-      if (!isNaN(value) && value >= 1 && value <= 5) {
-        setSelectedRating(value);
-      }
-    };
+    // const handleSelectRating = (e) => {
+    //   const value = parseInt(e.target.value, 10);
+    //   if (!isNaN(value) && value >= 1 && value <= 5) {
+    //     setSelectedRating(value);
+    //   }
+    // };
 
 
-    const handleSubmitRating = (e) => {
-      e.preventDefault();
-      console.log('Submitted value:', selectedRating);
-      // You can perform any action with the stored value here
-    };
+    // const handleSubmitRating = (e) => {
+    //   e.preventDefault();
+    //   console.log('Submitted value:', selectedRating);
+    //   // You can perform any action with the stored value here
+    // };
   
 
     return (
@@ -368,7 +419,7 @@ const SearchBar = () => {
               <li key={index} style={resultsStyle} onClick={() => handleResultClick(index)}>
                 <img src={result.image} alt="Lawyer" style={{ width: '30px', height: '30px', marginRight: '20px',marginLeft:'20px', display:'inline-block', border: '2px solid #000', borderRadius:'50%', }} />
                 <p style={{display:'inline-block', marginRight: '20px',marginLeft:'20px',}}>{result.name}</p>
-                <StarRating notation={result.notation} />
+
                 {/*<p style={{display:'inline-block', marginRight: '20px',marginLeft:'20px',}}>{result.notation}</p>*/}
 
               </li>
@@ -387,25 +438,15 @@ const SearchBar = () => {
               <button style={{position:'absolute', top:'10px', right:'10px'}} onClick={() => setShowDetailsModal(false)}>Close</button>
               <div style={{textAlign:'center'}}>
                 <img src={selectedResult.image} alt="Profile_image" style={{ width: '100px', height: '100px',border: '2px solid #000', borderRadius:'10px', }} />
-                <h3>{selectedResult.name}</h3>
-                <StarRating notation={selectedResult.notation} />
-                <p>{selectedResult.description}</p>
+                <h3>{selectedResult.username}</h3>
+                <StarRating notation={rating} />
+                <p>{selectedResult.email}</p>
+                <p>{selectedResult.specialite}</p>
+                <p>{selectedResult.Numero_de_telephone}</p>
+                
               </div>
-              <p>
-              <label>
-                Rate me!
-                <select value={selectedRating} onChange={handleSelectRating}>
-                  <option value="0">0</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
-              </label>
-              <button type="submit" onClick={handleSubmitRating}>Submit</button>
-              </p>
-              <button style={{position:'absolute', bottom:'10px', right:'10px'}} onClick={() => {setShowDetailsModal(false);}}>Take an appointment</button>
+              <link to={`/LawyerPageClient?email=${encodeURIComponent(selectedResult.email)}`}><button style={{position:'absolute', bottom:'10px', left:'10px'}} onClick={() => {setShowDetailsModal(false);}}>Consult lawyer's page</button></link>
+              <link to={`/appointment?email=${encodeURIComponent(selectedResult.email)}`}><button style={{position:'absolute', bottom:'10px', right:'10px'}} onClick={() => {setShowDetailsModal(false);}}>Take an appointment</button></link>
             </div>
         </>
       )}

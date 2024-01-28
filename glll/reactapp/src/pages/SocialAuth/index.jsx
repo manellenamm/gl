@@ -28,7 +28,6 @@ const SocialAuth = () => {
       .then((res) => {
         console.log("res", res);
         localStorage.setItem("goggleFirstName", res.data.user.first_name);
-        navigate("/loginuser/");
       })
       .catch((err) => {
         console.log("error", err);

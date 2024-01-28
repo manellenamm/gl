@@ -145,62 +145,52 @@ from rest_framework import serializers
 from .models import Appointment, Avocat, Client
 
 
+
+
+
 class CreneauSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Creneau  
+        model = Creneau
         fields = ['date_time', 'time']
 
 class AppointmentSerializer(serializers.ModelSerializer):
-    client_email = serializers.EmailField(write_only=True)
-    creneau = CreneauSerializer(write_only=True)
+    date_time = serializers.DateField(write_only=True)
+    time = serializers.CharField(write_only=True)  # Utiliser CharField pour accepter le format "HH:MM"
 
     class Meta:
         model = Appointment
-        fields = ['client_email', 'creneau', 'status']
+        fields = ['avocat', 'client', 'date_time', 'time', 'status']
 
-    def validate_creneau(self, value):
+    def validate(self, data):
         # Assurez-vous que l'heure est dans l'ensemble spécifié
         allowed_hours = ['8:00', '9:00', '10:00', '11:00', '13:00', '14:00', '15:00']
-        if str(value['time']) not in allowed_hours:
+        if data['time'] not in allowed_hours:
             raise serializers.ValidationError('Invalid time selected.')
-        
-        return value
+        return data
 
     def create(self, validated_data):
-        avocat_email = self.context.get('avocat_email')
-        avocat = get_object_or_404(Avocat, email=avocat_email)
+        avocat = validated_data.get('avocat')
+        client = validated_data.get('client')
 
-        client_email = validated_data.pop('client_email')
-        client = Client.objects.filter(email=client_email).first()
-
-        if not client:
-            raise serializers.ValidationError({'client_email': 'Client not found.'})
-
-        creneau_data = validated_data.pop('creneau')
-        date = creneau_data['date_time']
-        time = creneau_data['time']
+        date_time = validated_data.get('date_time')
+        time = validated_data.get('time')
 
         # Vérifier si la date est déjà dans la table Creneau
-        existing_creneau = Creneau.objects.filter(date_time=date, time=time).first()
+        existing_creneau = Creneau.objects.filter(date_time=date_time, time=time).first()
 
         if existing_creneau:
-            raise serializers.ValidationError({'creneau': 'Date and time already taken.'})
+            raise serializers.ValidationError({'non_field_errors': ['Date and time already taken.']})
 
         # Si la date n'est pas déjà dans la table Creneau et l'heure est valide, la créer
-        creneau = Creneau.objects.create(
-            date_time=date,
-            time=time
-        )
+        creneau = Creneau.objects.create(date_time=date_time, time=time)
 
         appointment = Appointment.objects.create(
-            client=client,
             avocat=avocat,
+            client=client,
             creneau=creneau,
         )
 
         return appointment
-
-
 class AvocatAppointmentSerializer(serializers.ModelSerializer):
     client = serializers.StringRelatedField()
     creneau = serializers.StringRelatedField()
@@ -220,3 +210,12 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['avocat', 'client', 'avis']
+
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+    client_username = serializers.ReadOnlyField(source='client.username')
+
+    class Meta:
+        model = Comment
+        fields = ['client_username', 'avis']

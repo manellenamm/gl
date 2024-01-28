@@ -23,7 +23,7 @@ const Loginuser = () => {
     const params = new URLSearchParams({
       response_type: "code",
       client_id: VITE_REACT_APP_GOOGLE_CLIENT_ID,
-      redirect_uri: `${VITE_REACT_APP_GOGGLE_REDIRECT_URL_ENDPOINT}/google`,
+      redirect_uri: `${VITE_REACT_APP_GOGGLE_REDIRECT_URL_ENDPOINT}/Accueil`,
       prompt: "select_account",
       access_type: "offline",
       scope,
