@@ -14,9 +14,9 @@ function LawyersButton(){
     }
 
     const lawyers="Lawyers"
-    return <button style={butStyle}>
+    return <Link to="/Login"><button style={butStyle}>
        {lawyers}
-    </button>
+    </button></Link>
 }
 
 export default LawyersButton;

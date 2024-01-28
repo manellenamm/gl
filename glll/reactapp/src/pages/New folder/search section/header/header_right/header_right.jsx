@@ -20,7 +20,7 @@ function HeaderRight(){
         <LoginButton/>
         <SigninButton/>
         <LawyersButton/>
-        <AboutusButton/>
+        
         <HomeButton/>
         
         </div>

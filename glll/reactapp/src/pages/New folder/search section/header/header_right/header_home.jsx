@@ -14,9 +14,9 @@ function HomeButton(){
     }
 
     const home="Home"
-    return <button style={butStyle}>
+    return <Link to="/Accueil"><button style={butStyle}>
        {home}
-    </button>
+    </button></Link>
 }
 
 export default HomeButton;
