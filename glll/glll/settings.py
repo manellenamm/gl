@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'corsheaders' ,
     'drf_yasg',
     'bs4',
+    'import_export',
+
 
     ]
 
@@ -178,3 +180,4 @@ EMAIL_HOST_PASSWORD = "hmsanvukusqkosws"
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+IMPORT_EXPORT_USE_TRANSACTIONS = True

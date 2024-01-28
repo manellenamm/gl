@@ -1,8 +1,8 @@
 from django.utils.html import format_html
 from django.contrib import admin
 from .models import *
-
-admin.site.register(Avocat)
+from import_export.admin import ImportExportModelAdmin
+admin.site.register(Avocat , ImportExportModelAdmin)
 admin.site.register(Admin)
 admin.site.register(Client)
 admin.site.register(Appointment)

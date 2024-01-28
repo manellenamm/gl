@@ -67,6 +67,7 @@ urlpatterns = [
          name='schema-swagger-ui'),
     path('lawyers/', LawyerList.as_view(), name='lawyer-list'),
     path('lawyers/<int:pk>/', LawyerDetail.as_view(), name='lawyer-detail'),
+ 
 
 
     
