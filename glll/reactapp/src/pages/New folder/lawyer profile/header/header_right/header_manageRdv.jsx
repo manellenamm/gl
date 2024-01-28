@@ -19,9 +19,9 @@ function ManageRdvButton(){
 
     }
     
-    return <button style={butStyle} onClick={HandlePageChange}>
+    return <Link to="/RdvPage"><button style={butStyle} onClick={HandlePageChange}>
        {manageRdv}
-    </button>
+    </button></Link>
 }
 
 export default ManageRdvButton;

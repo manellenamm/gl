@@ -19,7 +19,6 @@ function HeaderRight(){
         <LogoutButton/>
         <ManageRdvButton/>
         <EditProfileButton/>
-        <HomeButton/>
         
         </div>
 }

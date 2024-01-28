@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 function LogoutButton(){
     
     const butStyle={
@@ -19,9 +21,9 @@ function LogoutButton(){
 
 
     const login="Log out"
-    return <button style={butStyle} onClick={handleLogout}>
+    return <Link to="/Accueil"><button style={butStyle} onClick={handleLogout}>
        {login}
-    </button>
+    </button></Link>
 }
 
 export default LogoutButton;

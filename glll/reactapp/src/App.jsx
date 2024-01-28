@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Form, Login, Feedback, Appointment, UserProfile, Loginadmin, Loginuser, Accueil, Admin, LawyerPage,  SocialAuthadmin, LawyerPageClient} from "./pages";
+import { Form, Login, Feedback, Appointment, UserProfile, Loginadmin, Loginuser, Accueil, Admin, LawyerPage,  SocialAuthadmin, LawyerPageClient, RdvPage} from "./pages";
 
 // import Layout from "./hocs/Layout";
 
@@ -22,6 +22,7 @@ export default function App() {
              <Route exact path="/googlle" element={<SocialAuthadmin />} />
              <Route path="/LawyerPage" exact element={<LawyerPage />} />
              <Route path="/LawyerPageClient/:pk/:clientId/" element={<LawyerPageClient />} />
+             <Route path="/RdvPage" exact element={<RdvPage />} />
          
             
             

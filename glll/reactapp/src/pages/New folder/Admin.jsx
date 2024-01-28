@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Table from './table';
 
 const Admin = () => {
@@ -39,7 +40,7 @@ const Admin = () => {
 
   return (
     <div style={divStyle}>
-      <button
+      <Link to="/Accueil"><button
         style={{
           marginRight: '0px',
           position: 'absolute',
@@ -55,7 +56,7 @@ const Admin = () => {
         onClick={handleLogout}
       >
         Log out
-      </button>
+      </button></Link>
 
       <h1 style={{ color: 'white' }}>Hello admin</h1>
       <h3 style={{ color: 'white' }}>List of lawyers:</h3>

@@ -53,7 +53,7 @@ const Loginadmin = () => {
         localStorage.setItem("user_google", receivedUsername);
         setUsername(receivedUsername);
         setIsLoggedIn(true);
-        navigate("/loginadmin/");
+        navigate("/Admin");
       })
       .catch(error => {
         console.error('Error fetching user data:', error);
@@ -64,7 +64,7 @@ const Loginadmin = () => {
   useEffect(() => {
     if (isLoggedIn) {
       console.log("Already logged in, redirecting...");
-      navigate("/loginadmin/");
+      navigate("/Admin");
     } else {
       console.log("Not logged in yet");
     }
